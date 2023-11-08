@@ -32,13 +32,13 @@
 1. 克隆该项目：
 
 ```
-git clone ...
+git clone git@github.com:Conqueror712/Image-Description.git
 ```
 
 2. 进入根目录：
 
 ```
-cd ...
+cd Image-Description
 ```
 
 3. 下载数据集，放入根目录：
