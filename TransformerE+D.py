@@ -7,8 +7,11 @@ from torchvision import models, transforms
 from PIL import Image
 from nltk.translate.meteor_score import single_meteor_score
 from rouge import Rouge
-from cider.cider import Cider
+# from cider.cider import Cider
 
+"""
+目前会报错：KeyError: 19923
+"""
 
 # 包含所有在描述中出现过的单词的列表，此处只是一个示例
 vocabulary = ['<start>', 'a', 'cat', 'is', 'on', 'the', 'table', '<end>']
@@ -18,13 +21,16 @@ class ImageCaptionDataset(torch.utils.data.Dataset):
     """
     功能：加载和处理图像和描述
     """
+
     def __init__(self, image_dir, description_file, transform=None):
         self.image_dir = image_dir
         self.transform = transform
         self.descriptions = load_descriptions(description_file)
 
+
     def __len__(self):
         return len(self.descriptions)
+
 
     def __getitem__(self, idx):
         image_path = os.path.join(self.image_dir, self.descriptions[idx]['image_id'])
@@ -33,12 +39,26 @@ class ImageCaptionDataset(torch.utils.data.Dataset):
         return image, description
 
 
-def load_image(image_path, transform=None):
-    image = Image.open(image_path)
-    if transform is not None:
-        image = transform(image)
-    return image
+class TransformerModel(nn.Module):
+    """
+    功能：配置Transformer模型
+    """
+    def __init__(self, vocab_size, embed_dim, num_heads, num_layers):
+        super(TransformerModel, self).__init__()
+        self.embedding = nn.Embedding(vocab_size, embed_dim)
+        self.transformer = nn.Transformer(embed_dim, num_heads, num_layers)
+        
+    def forward(self, x):
+        x = self.embedding(x)
+        x = self.transformer(x)
+        return x
 
+
+def load_image(image_path, transform=None):
+        image = Image.open(image_path)
+        if transform is not None:
+            image = transform(image)
+        return image
 
 def load_descriptions(description_path):
     with open(description_path, 'r') as f:
@@ -46,10 +66,15 @@ def load_descriptions(description_path):
     return descriptions
 
 
-def compute_loss(predicted, target):
+def description_to_indices(description, vocabulary):
+    return [vocabulary.index(word) for word in description.split()]
+
+
+def compute_loss(predicted, target, vocabulary):
     """
     功能：计算交叉熵损失
     """
+    target = description_to_indices(target, vocabulary)
     loss = nn.CrossEntropyLoss()
     return loss(predicted, target)
 
@@ -61,7 +86,6 @@ def create_model():
 
     # 创建Transformer模型
     transformer = Transformer()
-
     return encoder, transformer
 
 
@@ -111,11 +135,11 @@ def evaluate_model(encoder, transformer, image_dir, description_file):
     dataloader = torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=False)
 
     rouge = Rouge()
-    cider = Cider()
+    # cider = Cider()
 
     total_meteor_score = 0
     total_rouge_score = 0
-    total_cider_score = 0
+    # total_cider_score = 0
 
     with torch.no_grad():
         for images, descriptions in dataloader:
@@ -127,13 +151,13 @@ def evaluate_model(encoder, transformer, image_dir, description_file):
             for predicted, target in zip(predicted_descriptions, descriptions):
                 total_meteor_score += single_meteor_score(target, predicted)
                 total_rouge_score += rouge.get_scores(target, predicted)[0]['rouge-l']['f']
-                total_cider_score += cider.compute_score([target], [predicted])[0]
+                # total_cider_score += cider.compute_score([target], [predicted])[0]
 
     average_meteor_score = total_meteor_score / len(dataset)
     average_rouge_score = total_rouge_score / len(dataset)
-    average_cider_score = total_cider_score / len(dataset)
+    # average_cider_score = total_cider_score / len(dataset)
 
-    return average_meteor_score, average_rouge_score, average_cider_score
+    return average_meteor_score, average_rouge_score# , average_cider_score
 
 
 def generate_description(encoder, transformer, image_path):
@@ -150,3 +174,26 @@ def generate_description(encoder, transformer, image_path):
     description = output_to_description(output)
 
     return description
+
+
+def main():
+    # 创建模型
+    encoder, transformer = create_model()
+    
+    # 训练模型
+    train_model(encoder, transformer, 'images', 'captions.json')
+    
+    # 评估模型
+    # meteor_score, rouge_score, cider_score = evaluate_model(encoder, transformer, 'images', 'captions.json')
+    meteor_score, rouge_score = evaluate_model(encoder, transformer, 'images/images', 'captions.json')
+    print(f'METEOR score: {meteor_score}')
+    print(f'ROUGE-L score: {rouge_score}')
+    # print(f'CIDEr score: {cider_score}')
+    
+    # 生成描述
+    description = generate_description(encoder, transformer, 'images/MEN-Denim-id_00000080-01_7_additional.jpg')
+    print(f'Description: {description}')
+
+
+if __name__ == '__main__':
+    main()
