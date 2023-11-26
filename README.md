@@ -16,24 +16,17 @@ git clone git@github.com:Conqueror712/Image-Caption.git
 cd Image-Caption
 ```
 
-3. 下载数据集，放入 `./data/images/`：
+
+3. 运行 `Model2_Transformer` 样例：
 
 ```
-......
+cd Model2_Transformer
+python predict.py --path ../data/images_demo/MEN-Denim-id_00000080-01_7_additional.jpg
 ```
 
+4. 查看 `Model2_Transformer` 结果：
 
-4. 运行 demo：
-
-```
-python main.py
-```
-
-6. 查看结果：
-
-```
-......
-```
+![image](./doc/img/Transformer_demo.png)
 
 
 ## 一、组员分工及检查点
