@@ -21,17 +21,17 @@ cd Image-Caption
 
 ```
 cd Model2_Transformer
-python predict.py --path ../data/images/MEN-Denim-id_00000089-03_7_additional.jpg   # demo 1
-python predict.py --path ../data/images/WOMEN-Tees_Tanks-id_00007976-01_4_full.jpg  # demo 2
+python predict.py --path ../data/images_demo/MEN-Denim-id_00000089-03_7_additional.jpg   # demo 1
+python predict.py --path ../data/images_demo/WOMEN-Tees_Tanks-id_00007976-01_4_full.jpg  # demo 2
 ```
 
 4. 查看 `Model2_Transformer` 结果（虽然现在分数有点低，有待优化）：
 > demo 1:
-> ![image](./data/images/MEN-Denim-id_00000089-03_7_additional.jpg)
+> ![image](./data/images_demo/MEN-Denim-id_00000089-03_7_additional.jpg)
 > ![image](./doc/img/Transformer_demo1.png)
 
 > demo 2:
-> ![image](./data/images/WOMEN-Tees_Tanks-id_00007976-01_4_full.jpg)
+> ![image](./data/images_demo/WOMEN-Tees_Tanks-id_00007976-01_4_full.jpg)
 > ![image](./doc/img/Transformer_demo2.png)
 
 ## 一、组员分工及检查点
