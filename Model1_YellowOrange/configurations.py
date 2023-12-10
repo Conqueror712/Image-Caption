@@ -10,9 +10,10 @@ class Config:
     # 模型参数
     embed_size = 256
     vocab_size = 10000  # 根据实际情况调整
-    num_layers = 3
+    num_layers = 3  # 定义循环神经网络（RNN）或其变体（如 LSTM 或 GRU）中的层数。
     num_heads = 8
     dropout = 0.1
+    hidden_size = 512
 
     # 数据处理参数
     min_word_count = 5  # 词汇表中词的最小出现次数
