@@ -26,9 +26,9 @@ def process_directory(directory):
     return results
 
 # 使用函数处理目录
-directory = 'data/images'  # 请将此路径替换为您的图片数据集的实际路径
+directory = '../../data/images'
 results = process_directory(directory)
 
 # 将结果保存到json文件中
-with open('../data/label.json', 'w') as f:
+with open('../../data/label.json', 'w') as f:
     json.dump(results, f, ensure_ascii=False, indent=4)

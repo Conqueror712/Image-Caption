@@ -152,7 +152,7 @@
 
 ### 4.1 共性问题
 
-目前的 `train_captions.json` 文件中，每张图片的关键点是包含在图片名称里的，然而，如果将其分出来，作为单独的一个属性的话会好处理一些，这是可以优化的地方，代码已经放在 `./Model2_Transformer/data_preprocessing` 了，但还没有作用于数据集。
+目前的 `train_captions.json` 文件中，每张图片的关键点是包含在图片名称里的，然而，如果将其分出来，作为单独的一个属性的话会好处理一些，这是可以优化的地方，代码已经放在 `./Model2_Transformer/data_preprocessing` 了，该问题已处理。
 
 ### 4.2 Transformer Model 问题
 
