@@ -4,10 +4,10 @@
 
 - 定义模型：completed
 
-- 定义损失函数：todo
+- 定义损失函数：completed
 
-- 选择优化方法：todo
+- 选择优化方法：completed
 
-- 评估指标：todo
+- 评估指标：completed
 
 - 训练模型：todo

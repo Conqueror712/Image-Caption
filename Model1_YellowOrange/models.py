@@ -1,11 +1,11 @@
 import torch
 import torch.nn as nn
-import torchvision
 from pycocoevalcap.cider.cider import Cider
 import numpy as np
 from configurations import Config
 from torchvision.models import resnet101, ResNet101_Weights
 from torch.nn.utils.rnn import pack_padded_sequence
+import torch.optim as optim
 
 
 # 图像编码器
@@ -308,31 +308,99 @@ class ARCTIC(nn.Module):
         return texts
 
 
+# 损失函数
+class PackedCrossEntropyLoss(nn.Module):
+    def __init__(self):
+        super(PackedCrossEntropyLoss, self).__init__()
+        self.loss_fn = nn.CrossEntropyLoss()
+
+    def forward(self, predictions, targets, lengths):
+        """
+        计算交叉熵损失，排除填充的部分。
+        参数：
+            predictions：模型的预测结果，形状为 (batch_size, max_length, vocab_size)。
+            targets：实际的文本描述，形状为 (batch_size, max_length)。
+            lengths：每个描述的实际长度。
+        """
+        # 使用 pack_padded_sequence 来处理变长序列
+        # 这里 predictions 和 targets 都需要进行 pack 操作
+        # 由于 pack_padded_sequence 需要长度从长到短的序列，这里假设输入已经是这种格式
+        packed_predictions = pack_padded_sequence(predictions, lengths, batch_first=True, enforce_sorted=False)[0]
+        packed_targets = pack_padded_sequence(targets, lengths, batch_first=True, enforce_sorted=False)[0]
+
+        # 计算损失，忽略填充的部分
+        loss = self.loss_fn(packed_predictions, packed_targets)
+        return loss
+
+
+def get_optimizer(model, config):
+    """
+    获取优化器，为模型的不同部分设置不同的学习速率。
+    参数：
+        model：训练模型。
+        config：包含配置信息的对象，如学习速率等。
+    返回：
+        配置好地优化器。
+    """
+    # 为编码器和解码器设置不同的学习速率
+    encoder_params = filter(lambda p: p.requires_grad, model.encoder.parameters())
+    decoder_params = filter(lambda p: p.requires_grad, model.decoder.parameters())
+
+    # 创建优化器，分别对这两部分参数应用不同的学习速率
+    optimizer = optim.Adam([
+        {"params": encoder_params, "lr": config.encoder_learning_rate},
+        {"params": decoder_params, "lr": config.decoder_learning_rate}
+    ])
+
+    return optimizer
+
+# 以下函数是为了展示如何在训练过程中调整学习速率，实际上可能并未使用
+def adjust_learning_rate(optimizer, epoch, config):
+    """
+    调整学习速率，每隔一定轮次减少到原来的十分之一。
+    参数：
+        optimizer：优化器。
+        epoch：当前轮次。
+        config：包含配置信息的对象。
+    """
+    for param_group in optimizer.param_groups:
+        if param_group['name'] == 'encoder':
+            param_group['lr'] = config.encoder_learning_rate * (0.1 ** (epoch // config.lr_update))
+        else:
+            param_group['lr'] = config.decoder_learning_rate * (0.1 ** (epoch // config.lr_update))
+
+
 # CIDEr-D 评估
-def compute_cider_d(predictions, references):
-    """
-    计算 CIDEr-D 分数。
+def filter_useless_words(sent, filterd_words):
+    # 去除句子中不参与CIDEr-D计算的符号
+    return [w for w in sent if w not in filterd_words]
 
-    参数:
-    predictions (list of str): 生成的描述列表。
-    references (list of list of str): 对应的一组参考描述列表。
 
-    返回:
-    float: CIDEr-D 分数。
-    """
+def evaluate_cider(data_loader, model, config):
+    model.eval()
+    # 存储候选文本和参考文本
+    cands = {}
+    refs = {}
+    filterd_words = {model.vocab['<start>'], model.vocab['<end>'], model.vocab['<pad>']}
+    device = next(model.parameters()).device
 
-    # 确保参考描述的格式是字典形式
-    # 键是一个整数（可以是任何唯一的ID），值是一个描述列表
-    ref_dict = {}
-    pred_dict = {}
-    for i, (pred, refs) in enumerate(zip(predictions, references)):
-        ref_dict[i] = refs
-        pred_dict[i] = [pred]
+    for i, (imgs, caps, caplens, allcaps) in enumerate(data_loader):
+        imgs = imgs.to(device)
+        # Generate captions
+        preds = model.sample(imgs)
+        for j in range(imgs.size(0)):
+            img_id = str(i * config.batch_size + j)
+            cand = ' '.join(filter_useless_words(preds[j], filterd_words))
+            cands[img_id] = [cand]
+            refs[img_id] = list(map(lambda x: ' '.join(filter_useless_words(x, filterd_words)), allcaps[j].tolist()))
 
-    # 使用 pycocoevalcap 的 Cider 类来计算
+    # 计算CIDEr-D得分
     cider_evaluator = Cider()
-    score, _ = cider_evaluator.compute_score(ref_dict, pred_dict)
+    score, scores = cider_evaluator.compute_score(refs, cands)
+
+    model.train()
     return score
+
 
 
 encoder = ImageEncoder(Config.embed_size)

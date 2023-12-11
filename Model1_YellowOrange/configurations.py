@@ -22,8 +22,11 @@ class Config:
     # 训练参数
     batch_size = 32
     learning_rate = 0.001
-    num_epochs = 20
+    num_epochs = 30
     workers = 4  # 工作线程数
+    encoder_learning_rate = 1e-4  # 编码器的学习率
+    decoder_learning_rate = 1e-3  # 解码器的学习率
+    lr_update = 10  # 每10轮降低学习速率
 
     # 图像预处理参数
     image_size = 256  # 图像缩放大小

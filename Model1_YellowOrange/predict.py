@@ -1,7 +1,7 @@
 import torch
 from models import ImageCaptioningModel
 from datasets import FashionDataset
-from configuration import Config
+from configurations import Config
 
 def predict(image_path, model_path):
     # 加载配置和模型
