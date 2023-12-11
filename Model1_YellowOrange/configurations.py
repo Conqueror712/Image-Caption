@@ -17,7 +17,7 @@ class Config:
 
     # 数据处理参数
     min_word_count = 5  # 词汇表中词的最小出现次数
-    max_len = 64  # 假设描述的最大长度为64个词
+    max_len = 200  # 假设描述的最大长度为200个词
 
     # 训练参数
     batch_size = 32
