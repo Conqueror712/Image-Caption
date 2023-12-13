@@ -403,9 +403,9 @@ def evaluate_cider(data_loader, model, config):
 
 
 
-encoder = ImageEncoder(Config.embed_size)
-decoder = AttentionDecoder(Config.embed_size, Config.vocab_size, Config.hidden_size, Config.num_layers)
-arctic_model = ARCTIC(encoder, decoder)
+# encoder = ImageEncoder(Config.embed_size)
+# decoder = AttentionDecoder(Config.embed_size, Config.vocab_size, Config.hidden_size, Config.num_layers)
+# arctic_model = ARCTIC(encoder, decoder)
 
 # 示例：前馈过程
 # images = ...  # 从数据集中获取图像
