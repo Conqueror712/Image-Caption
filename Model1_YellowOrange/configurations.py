@@ -14,6 +14,9 @@ class Config:
     num_heads = 8
     dropout = 0.1
     hidden_size = 512
+    image_code_dim = 2048  # 图像编码维度
+    word_dim = 256  # 词嵌入维度
+    attention_dim = 512  # 注意力机制的隐藏层维度
 
     # 数据处理参数
     min_word_count = 5  # 词汇表中词的最小出现次数
@@ -23,7 +26,7 @@ class Config:
     batch_size = 32
     learning_rate = 0.001
     num_epochs = 30
-    workers = 4  # 工作线程数
+    workers = 0  # 工作线程数,在自己的电脑上训练的时候设为0
     encoder_learning_rate = 1e-4  # 编码器的学习率
     decoder_learning_rate = 1e-3  # 解码器的学习率
     lr_update = 10  # 每10轮降低学习速率
