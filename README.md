@@ -27,11 +27,8 @@ python predict.py --path ../data/images_demo/WOMEN-Tees_Tanks-id_00007976-01_4_f
 
 4. 查看 `Model2_Transformer` 结果（虽然现在分数有点低，有待优化）：
 > demo 1:
-> ![image](data/train_images/MEN-Denim-id_00000089-03_7_additional.jpg)
 > ![image](./doc/img/Transformer_demo1.png)
-
 > demo 2:
-> ![image](data/train_images/WOMEN-Tees_Tanks-id_00007976-01_4_full.jpg)
 > ![image](./doc/img/Transformer_demo2.png)
 
 ## 一、组员分工及检查点
