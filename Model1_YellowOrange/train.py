@@ -61,7 +61,7 @@ def main():
 
             # 打印/记录损失信息
             if (i + 1) % 100 == 0:
-                print('Epoch [{epoch + 1}/{config.num_epochs}], Step [{i + 1}/{len(train_loader)}], Loss: {loss.item():.4f}')
+                print(f'Epoch [{epoch + 1}/{config.num_epochs}], Step [{i + 1}/{len(train_loader)}], Loss: {loss.item():.4f}')
 
         # 在每个epoch结束时使用测试集评估模型
         current_test_score = evaluate_cider(test_loader, model, config)
