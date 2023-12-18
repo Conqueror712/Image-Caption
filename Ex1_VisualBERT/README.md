@@ -1,18 +1,18 @@
-# VisualBERT: A Simple and Performant Baseline for Vision and Language
+# VisualBERT:一个简单而高效的视觉和语言 Baseline
 
-This repository contains code for the paper [VisualBERT: A Simple and Performant Baseline for Vision and Language (arxiv)](https://arxiv.org/abs/1908.03557).
+论文链接：[VisualBERT: A Simple and Performant Baseline for Vision and Language (arxiv)](https://arxiv.org/abs/1908.03557).
 
-The repository is still under development. Please open up issues if you have any questions or comments. 
+`pytorch_pretrained_bert` 是 HuggingFace 的 Pytorch BERT 的早期克隆的修改版本。
 
-In `pytorch_pretrained_bert` is a modified version of an early clone of HuggingFace's Pytorch BERT. The core part of VisualBERT is implemented mainly by modifying `modeling.py`. Two wrapper models are implemented in `models/model.py`, and code for loading different datasets are in `dataloaders`, where AllenNLP's `Field` and `Instance` are extensively used for wrapping data.
+VisualBERT 的核心部分主要通过修改 `modeling.py` 来实现。两个 wrapping model 在`models/model.py `中实现，用于加载不同数据集的代码在  `dataloders` 中，其中 allenlp 的 `Field` 和 `instance` 被广泛用于 wrapping data。
 
-I borrowed and modified code from several repositeries, including but not limited to: [R2C](https://github.com/rowanz/r2c), [Pythia](https://github.com/facebookresearch/pythia), [HugginFace BERT](https://github.com/huggingface/pytorch-transformers), [BAN](https://github.com/jnhwkim/ban-vqa), [Bottom-up and Top-down Attention](https://github.com/peteanderson80/bottom-up-attention), [AllenNLP](https://github.com/allenai/allennlp). I would like to expresse my gratitdue for authors of these repositeries.
+# 依赖关系
 
-# Dependencies
+## 基础部分
 
-## Basic
+这个存储库的依赖关系类似于 R2C。
 
-Dependencies of this repository are similar to those of R2C. If you don't need to extract image features yourself or run on VCR, below are basic dependencies needed (assuming you are using a fresh conda environment):
+如果您不需要自己提取图像特征或在 VCR 上运行，则需要以下基本依赖项（假设您使用的是新的 conda 环境）：
 
 ```
 conda install numpy pyyaml setuptools cmake cffi tqdm pyyaml scipy ipython mkl mkl-include cython typing h5py pandas nltk spacy numpydoc scikit-learn jpeg
@@ -31,39 +31,38 @@ pip install pycocotools
 pip install commentjson
 ```
 
-## Extracting image features
+## 提取图像特征部分
 
-Only install if you want to run on VCR or extract image features on your own.
+这部分只有在您想要在VCR上运行或自己提取图像功能时才安装。
 
-1. A special version of pytorch vision that has ROIAlign layer:
+1. pytorch vision 的特殊版本，具有 ROIAlign 层:
 ```
 pip install git+git://github.com/pytorch/vision.git@24577864e92b72f7066e1ed16e978e873e19d13d
 ```
 2. [Detectron](https://github.com/facebookresearch/Detectron/)
 
 
-## Troubleshooting
-Below are some problems I have had when installing these dependencies:
+## 故障排除部分
+以下是我在安装这些依赖项时遇到的一些问题：
 
 1. pyyaml version.
 
-Detectron might break when the pyyaml version is too high (not sure if this has been fixed now).
-Solution: install a lower version `pip install pyyaml==3.12`. (https://github.com/facebookresearch/Detectron/issues/840, https://github.com/pypa/pip/issues/5247)
+当pyyaml版本太高时，Detectron可能会寄（不确定现在是否已修复）。
+
+> 解决方法: install a lower version `pip install pyyaml==3.12`. (https://github.co m/facebookresearch/Detectron/issues/840, https://github.com/pypa/pip/issues/5247)
 
 2. Error when importing torchvision or ROIAlign layer.
 
-Most likely version mismatch between cudatoolkit and cuda verison. Please specify the correct cudatoolkit verison in `conda install pytorch torchvision cudatoolkit=XXX -c pytorch`.
+> 很可能是 cudatoolkit 和 cuda 版本不匹配。请在 `conda install pytorch torchvision cudatoolkit=XXX -c pytorch` 中指定正确的 cudatoolkit 版本。
 
 3. Segmentation fault when runing ResNet50 detector in VCR.
 
-Most likely GCC version is too low. Need GCC version >= 5.0. 
-
-`conda install -c psi4 gcc-5` seems to solve the problem. (https://github.com/facebookresearch/maskrcnn-benchmark/blob/master/TROUBLESHOOTING.md)
+> 很可能 GCC 版本太低。需要 GCC 版本&gt;= 5.0。`conda install -c psi4 gcc-5` seems to solve the problem. (https://github.com/facebookresearch/maskrcnn-benchmark/blob/master/TROUBLESHOOTING.md)
 
 
-# Running the code
+# 运行代码
 
-Assume that the folder XX is the parent directory of the code directory. 
+假设文件夹 XX 是代码目录的父目录。
 ```
 export PYTHONPATH=$PYTHONPATH:XX/visualbert/
 export PYTHONPATH=$PYTHONPATH:XX/
@@ -72,17 +71,21 @@ cd XX/visualbert/models/
 
 CUDA_VISIBLE_DEVICES=XXXX python train.py -folder [where you want to save the logs/models] -config XX/visualbert/configs/YYYY
 ```
-In `visualbert/configs` are configs for different models on different datasets. Please change the data path (`data_root`) and model path(`restore_bin`, which is the path the model that you want to initialize from) in the config to match your local setting.
+在 `visualbert/configs` 中是不同数据集上不同模型的配置。请更改配置中的数据路径 `data_root` 和模型路径 `restore_bin`，这是您想要初始化的模型的路径，以匹配您的本地设置。
 
 ## NLVR2
 
 ### Prepare Data
 
-Download our pre-computed features to a folder X_NLVR ([Train](https://drive.google.com/file/d/1iK9CDfxZ4ejKRWOIItLhD8-sgw78ld7w/view?usp=sharing), [Val](https://drive.google.com/file/d/13rFujBIBr6PLnG5A5i8WJJVT52RPYH9j/view?usp=sharing), [Test-Public](https://drive.google.com/file/d/1RTXZCK_kbFkqOeBnZ5wOAyDSzlmuaKRx/view?usp=sharing)). The image features are from a model from Detectron (e2e_mask_rcnn_R-101-FPN_2x, model_id: 35861858). For downloading from Google Drive links in the command line, check out https://github.com/gdrive-org/gdrive.
+将我们预先计算的特性下载到 X_NLVR 文件夹中 ([Train](https://drive.google.com/file/d/1iK9CDfxZ4ejKRWOIItLhD8-sgw78ld7w/view?usp=sharing), [Val](https://drive.google.com/file/d/13rFujBIBr6PLnG5A5i8WJJVT52RPYH9j/view?usp=sharing), [Test-Public](https://drive.google.com/file/d/1RTXZCK_kbFkqOeBnZ5wOAyDSzlmuaKRx/view?usp=sharing))
 
-Then download the three json files from [the NLVR github page](https://github.com/lil-lab/nlvr/tree/master/nlvr2/data) into X_NLVR.
+图像特征来自Detectron的模型(e2e_mask_rcnn_R-101-FPN_2x, model_id: 35861858)。
 
-For COCO pre-training, first download COCO caption annotations to a folder X_COCO.
+在命令行中从Google Drive下载链接，请点击 https://github.com/gdrive-org/gdrive
+
+然后下载三个json文件 [the NLVR github page](https://github.com/lil-lab/nlvr/tree/master/nlvr2/data) 到 X_NLVR中
+
+对于COCO预训练，首先将COCO标题注释下载到X_COCO文件夹中。
 
 ```
 cd X_COCO
@@ -90,7 +93,7 @@ wget http://images.cocodataset.org/annotations/annotations_trainval2014.zip
 unzip annotations_trainval2014.zip
 ```
 
-Then download COCO image features to X_COCO. [Train](https://drive.google.com/file/d/1F-LSQhpKleV4nmiKMjQvpHMS2gkbK3bY/view?usp=sharing), [Val](https://drive.google.com/file/d/1cZjPob3YqfM46LaWY3-Ky12claxeXbWi/view?usp=sharing).
+然后将COCO图像特性下载到X_COCO。 [Train](https://drive.google.com/file/d/1F-LSQhpKleV4nmiKMjQvpHMS2gkbK3bY/view?usp=sharing), [Val](https://drive.google.com/file/d/1cZjPob3YqfM46LaWY3-Ky12claxeXbWi/view?usp=sharing).
 
 ### COCO Pre-training
 The corresponding config is `visualbert/configs/nlvr2/coco-pre-train.json`. [Model checkpoint](https://drive.google.com/file/d/1QvivVfRsRF518OQSQNaN7aFk6eQ43vP_/view?usp=sharing).
@@ -198,7 +201,7 @@ The corresponding config is `visualbert/configs/flickr/pre-train.json`.
 The corresponding config is `visualbert/configs/flickr/fine-tune.json`.
 
 
-## Extract image features on your own
+## 自己提取图像特征
 ### Extract features using Detectron for NLVR2
 Dowload the corresponding config (XXX.yaml) and checkpoint (XXX.pkl) from [Detectron](https://github.com/facebookresearch/Detectron). The model I used is 35861858. 
 
@@ -210,5 +213,4 @@ Then run:
 cd visualbert/utils/get_image_features
 CUDA_VISIBLE_DEVICES=0 python extract_features_nlvr.py --cfg XXX.yaml --wts XXX.pkl --min_bboxes 150 --max_bboxes 150 --feat_name gpu_0/fc6 --output_dir X_NLVR --image-ext png X_NLVR_IMAGE/SET --no_id --one_giant_file X_NLVR/features_SET_150.th
 ```
-
 
