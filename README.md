@@ -16,8 +16,7 @@ git clone git@github.com:Conqueror712/Image-Caption.git
 cd Image-Caption
 ```
 
-
-3. 运行 `Model2_Transformer` 样例：
+## 一、运行 Transformer 模型的方法
 
 ```
 cd Model2_Transformer
@@ -25,17 +24,36 @@ python predict.py --path ../data/images_demo/MEN-Denim-id_00000089-03_7_addition
 python predict.py --path ../data/images_demo/WOMEN-Tees_Tanks-id_00007976-01_4_full.jpg  # demo 2
 ```
 
-4. 查看 `Model2_Transformer` 结果（虽然现在分数有点低，有待优化）：
-> demo 1:
-> ![image](./doc/img/Transformer_demo1.png)
-> demo 2:
-> ![image](./doc/img/Transformer_demo2.png)
->
-> 多模态 demo:
->
-> ![image](./doc/img/BLIP_demo.png)
+> 查看结果：
 
-## 一、组员分工及检查点
+demo 1:
+![image](./doc/img/Transformer_demo1.png)
+demo 2:
+![image](./doc/img/Transformer_demo2.png)
+
+## 二、运行 BLIP 多模态模型的方法
+
+```
+cd Ex1_BLIP-base
+pip install -r requirements.txt
+python run_half_precision.py
+```
+
+> 查看结果：
+
+demo 1:
+
+![image](./doc/img/BLIP_1.png)
+
+demo 2:
+
+![image](./doc/img/BLIP_2.png)
+
+demo 3:
+
+![image](./doc/img/BLIP_3.png)
+
+## 三、组员分工及检查点
 
 > 分工表：
 
@@ -47,12 +65,12 @@ python predict.py --path ../data/images_demo/WOMEN-Tees_Tanks-id_00007976-01_4_f
 
 > 检查点：
 
-|        |  Point 1  |          Point 2           |      Point 3      |         Point 4          |
-| ------ | :-------: | :------------------------: | :---------------: | :----------------------: |
-| 巩羽飞 | 开题报告✅ | 跑通负责的模型 + 评测指标✅ |     中期报告✅     | 附加任务微调多模态大模型 |
-| 黄成梓 | 开题报告✅ | 跑通负责的模型 + 评测指标✅ | 附加任务优化指标✅ |         结题报告         |
+|        |  Point 1  |          Point 2           |      Point 3      |          Point 4          |
+| ------ | :-------: | :------------------------: | :---------------: | :-----------------------: |
+| 巩羽飞 | 开题报告✅ | 跑通负责的模型 + 评测指标✅ |     中期报告✅     | 附加任务微调多模态大模型✅ |
+| 黄成梓 | 开题报告✅ | 跑通负责的模型 + 评测指标✅ | 附加任务优化指标✅ |         结题报告          |
 
-## 二、时间安排
+## 四、时间安排
 
 |   11.25   |        11.30         |            12.12             |                12.28                |
 | :-------: | :------------------: | :--------------------------: | :---------------------------------: |
