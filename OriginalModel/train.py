@@ -2,7 +2,7 @@ import json
 import torch
 import os
 from configurations import Config
-from models import AttentionModel, get_optimizer, PackedCrossEntropyLoss, evaluate_cider
+from models import ARCTIC, get_optimizer, PackedCrossEntropyLoss, evaluate_cider
 from datasets import create_dataloaders, ImageTextDataset
 
 
@@ -20,7 +20,7 @@ def main():
         vocab = json.load(f)
 
     # 模型初始化
-    model = AttentionModel(
+    model = ARCTIC(
         image_code_dim=config.image_code_dim,
         vocab=vocab,  # 传递词汇表字典
         word_dim=config.word_dim,
@@ -51,12 +51,6 @@ def main():
 
             optimizer.zero_grad()
             outputs, alphas, _, _, _ = model(imgs, caps, caplens)
-
-            # 确保目标序列长度与模型输出匹配
-            targets = caps[:, 1:]  # 假设targets是captions去除第一个<start>标记后的部分
-            # print(f"Outputs shape: {outputs.shape}")
-            # print(f"Targets shape: {targets.shape}")
-            # print(f"Caplens: {caplens}")
             loss = loss_fn(outputs, targets, caplens)
             loss.backward()
             optimizer.step()
@@ -72,7 +66,7 @@ def main():
         # 如果当前得分比之前的最佳得分要好，则保存模型
         if current_test_score > best_test_score:
             best_test_score = current_test_score
-            best_model_path = os.path.join(weights_dir, f'Attention_model_epoch_{epoch + 1}.pth')
+            best_model_path = os.path.join(weights_dir, f'Original_model_epoch_{epoch + 1}.pth')
             torch.save(model.state_dict(), best_model_path)
             print(f"Saved new best model to {best_model_path}")
 
@@ -80,10 +74,7 @@ def main():
     final_test_score = evaluate_cider(test_loader, model, config)
     print(f"Final CIDEr-D score = {final_test_score}")
 
-    # # 训练完成后保存模型
-    # final_model_path = os.path.join(weights_dir, 'AttentionModel.pth')
-    # torch.save(model.state_dict(), final_model_path)
-    # print(f"Saved final model to {final_model_path}")
+
 
 
 if __name__ == '__main__':

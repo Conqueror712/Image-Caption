@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from pycocoevalcap.cider.cider import Cider
 import numpy as np
-from configurations import Config
+from configuartions import Config
 from torchvision.models import resnet101, ResNet101_Weights
 from torch.nn.utils.rnn import pack_padded_sequence
 import torch.optim as optim
@@ -239,19 +239,19 @@ class AttentionDecoder(nn.Module):
                 # 只拷贝实际长度的预测结果
                 padded_predictions[i, :actual_length, :] = predictions[i, :actual_length, :]
 
-        return predictions, alphas, captions, lengths, sorted_cap_indices
+        return padded_predictions, alphas, captions, lengths, sorted_cap_indices
 
 
-# ARCTIC 模型
+# AttentionModel 模型
 '''
 注意：确保 image_code_dim 等参数与 ImageEncoder 的输出匹配
 
 最终 ImageEncoder 的输出形状仍然是 (batch_size, num_channels, height, width)。
 这意味着 image_code_dim 应该设置为 num_channels，即 ResNet101 最后一个卷积层的输出通道数。这个值通常为2048，
 '''
-class ARCTIC(nn.Module):
+class AttentionModel(nn.Module):
     def __init__(self, image_code_dim, vocab, word_dim, attention_dim, hidden_size, num_layers):
-        super(ARCTIC, self).__init__()
+        super(AttentionModel, self).__init__()
         self.vocab = vocab
         self.encoder = ImageEncoder()
         self.decoder = AttentionDecoder(image_code_dim, len(vocab), word_dim, attention_dim, hidden_size, num_layers)
@@ -439,14 +439,14 @@ def evaluate_cider(data_loader, model, config):
             ref_words = [idx_to_word.get(word.item(), '<unk>') for word in caps[j]]
             refs[img_id] = [' '.join(filter_useless_words(ref_words, filterd_words))]  # 参考描述
 
-    # 在调用 compute_score 之前添加调试信息
-    for key, value in cands.items():
-        print(f"Key: {key}, Value type: {type(value)}, Value: {value}")
-        assert isinstance(value, list), f"Value for key {key} is not a list in cands"
-
-    for key, value in refs.items():
-        print(f"Key: {key}, Value type: {type(value)}, Value: {value}")
-        assert isinstance(value, list), f"Value for key {key} is not a list in refs"
+    # # 在调用 compute_score 之前添加调试信息
+    # for key, value in cands.items():
+    #     print(f"Key: {key}, Value type: {type(value)}, Value: {value}")
+    #     assert isinstance(value, list), f"Value for key {key} is not a list in cands"
+    #
+    # for key, value in refs.items():
+    #     print(f"Key: {key}, Value type: {type(value)}, Value: {value}")
+    #     assert isinstance(value, list), f"Value for key {key} is not a list in refs"
 
     # 计算CIDEr-D得分
     cider_evaluator = Cider()
