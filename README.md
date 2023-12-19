@@ -30,6 +30,10 @@ python predict.py --path ../data/images_demo/WOMEN-Tees_Tanks-id_00007976-01_4_f
 > ![image](./doc/img/Transformer_demo1.png)
 > demo 2:
 > ![image](./doc/img/Transformer_demo2.png)
+>
+> 多模态 demo:
+>
+> ![image](./doc/img/BLIP_demo.png)
 
 ## 一、组员分工及检查点
 
