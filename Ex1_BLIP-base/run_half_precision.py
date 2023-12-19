@@ -18,7 +18,7 @@ inputs = processor(raw_image, text, return_tensors="pt").to("cuda", torch.float1
 
 out = model.generate(**inputs)
 print("===================================================================================")
-print("含有条件：", processor.decode(out[0], skip_special_tokens=True))
+print("更详细的描述：", processor.decode(out[0], skip_special_tokens=True))
 print("===================================================================================")
 
 # Unconditional image captioning
@@ -26,5 +26,5 @@ inputs = processor(raw_image, return_tensors="pt").to("cuda", torch.float16)
 
 out = model.generate(**inputs)
 print("===================================================================================")
-print("不含条件：", processor.decode(out[0], skip_special_tokens=True))
+print("更通用的描述：", processor.decode(out[0], skip_special_tokens=True))
 print("===================================================================================")
