@@ -8,7 +8,7 @@ processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base
 model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base", torch_dtype=torch.float16).to("cuda")
 
 # Path to the folder containing images
-images_folder = "../Ex_data/test_images"
+images_folder = "../Ex2_data/train_images"
 
 # Create a dictionary to store image captions
 captions_dict = {}
@@ -28,6 +28,7 @@ for filename in os.listdir(images_folder):
         
         # Process the image and generate caption
         inputs = processor(raw_image, text, return_tensors="pt").to("cuda", torch.float16)
+        
         out = model.generate(**inputs)
         generated_caption = processor.decode(out[0], skip_special_tokens=True)
 
@@ -38,7 +39,7 @@ for filename in os.listdir(images_folder):
         captions_dict[img_path] = generated_caption
 
 # Save the dictionary to captions.json
-output_path = "background_test_captions.json"
+output_path = "../Ex2_data/Ex2_background_train_captions.json"
 with open(output_path, 'w') as json_file:
     json.dump(captions_dict, json_file, indent=4)
 
