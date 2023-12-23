@@ -4,7 +4,6 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from transformers import BertTokenizer
 from PIL import Image
-from models import caption
 from configuration import Config
 
 # 数据集类

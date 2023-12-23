@@ -6,25 +6,48 @@ import nltk
 from transformers import BertTokenizer
 from PIL import Image
 from models import caption
-from datasets import coco, utils
+from datasets import coco
+from models.alice import single_meteor_scr, rl_scr
 from configuration import Config
-from nltk.translate.meteor_score import single_meteor_score
-from nltk.tokenize import word_tokenize
-from rouge import Rouge
 
 nltk.download('punkt')
 nltk.download('wordnet')
 
-# 读取命令行参数
 parser = argparse.ArgumentParser(description='Image Captioning')
-parser.add_argument('--path', type=str, help='path to image', required=True)
+parser.add_argument('--img', type=str, help='Image Path', required=True)
+# parser.add_argument('--v', type=str, help='version', default='v3')
+# parser.add_argument('--checkpoint', type=str, help='checkpoint path', default=None)
 args = parser.parse_args()
 image_path = args.path
+# version = args.v
+# checkpoint_path = args.checkpoint
+
+config = Config()
 
 # 加载模型
-config = Config()
-model, _ = caption.build_model(config)
-model.load_state_dict(torch.load('Model2.pth'))
+model = torch.hub.load('saahiluppal/catr', 'v3', pretrained=True)
+
+# 保存模型权重
+torch.save(model.state_dict(), "image_caption_model.pth")
+
+# if version == 'v1':
+#     model = torch.hub.load('saahiluppal/catr', 'v1', pretrained=True)
+# elif version == 'v2':
+#     model = torch.hub.load('saahiluppal/catr', 'v2', pretrained=True)
+# elif version == 'v3':
+#     model = torch.hub.load('saahiluppal/catr', 'v3', pretrained=True)
+# else:
+#     print("Checking for checkpoint.")
+#     if checkpoint_path is None:
+#       raise NotImplementedError('No model to chose from!')
+#     else:
+#       if not os.path.exists(checkpoint_path):
+#         raise NotImplementedError('Give valid checkpoint path')
+#       print("Found checkpoint! Loading!")
+#       model,_ = caption.build_model(config)
+#       print("Loading Checkpoint...")
+#       checkpoint = torch.load(checkpoint_path, map_location='cpu')
+#       model.load_state_dict(checkpoint['model'])
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
 # 预处理图片
@@ -63,18 +86,6 @@ def evaluate():
 
     return caption
 
-# 计算 METEOR 分数
-def calc_meteor(reference, hypothesis):
-    hypothesis = word_tokenize(hypothesis)
-    reference = word_tokenize(reference)
-    return single_meteor_score(reference, hypothesis)
-
-# 计算 ROUGE-L 分数
-def calc_rouge_l(reference, hypothesis):
-    rouge = Rouge()
-    scores = rouge.get_scores(hypothesis, reference)
-    return scores[0]['rouge-l']['f']
-
 with open('../data/test_captions.json', 'r') as f:
     captions = json.load(f)
 
@@ -86,9 +97,8 @@ result = tokenizer.decode(output[0].tolist(), skip_special_tokens=True)
 print("=====================================================================")
 print("Predict Caption   = ", result.capitalize())
 print("Reference Caption = ", reference_description.capitalize())
-
-meteor_score = calc_meteor(reference_description, result)
-rouge_l_score = calc_rouge_l(reference_description, result)
+meteor_score = single_meteor_scr(reference_description, result)
+rouge_l_score = rl_scr(reference_description, result)
 print("-----------------------------")
 print("|| METEOR  Score =", round(meteor_score, 4), " ||")
 print("|| ROUGE-L Score =", round(rouge_l_score, 4), " ||")
