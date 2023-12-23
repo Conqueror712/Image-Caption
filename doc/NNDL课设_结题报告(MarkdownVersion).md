@@ -1014,7 +1014,7 @@ def calc_rouge_l(reference, hypothesis):
 
 > 待补充
 
-#### 5.1.2 Transformer Encoder and Decoder 输出展示（这个数值要调）
+#### 5.1.2 Transformer Encoder and Decoder 输出展示
 
 ![image](../doc/img/Transformer_demo1.png)
 
