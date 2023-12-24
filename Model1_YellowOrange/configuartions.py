@@ -23,9 +23,11 @@ class Config:
     max_len = 64  # 假设描述的最大长度为200个词
 
     # 训练参数
+    # batch_size = 16
     batch_size = 4
     learning_rate = 0.001
-    num_epochs = 30
+    # num_epochs = 30
+    num_epochs = 10
     workers = 0  # 工作线程数,在自己的电脑上训练的时候设为0
     encoder_learning_rate = 1e-4  # 编码器的学习率
     decoder_learning_rate = 1e-3  # 解码器的学习率

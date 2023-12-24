@@ -422,7 +422,7 @@ def evaluate_cider(data_loader, model, config):
     device = next(model.parameters()).device
 
     # 加载词汇表并创建反向词汇表
-    with open('../output_副本/vocab.json', 'r') as f:
+    with open('../data/output/vocab.json', 'r') as f:
         vocab = json.load(f)
     idx_to_word = {idx: word for word, idx in vocab.items()}
 

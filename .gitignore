@@ -1,5 +1,7 @@
-data/test_images/
-data/train_images/
+BACKUP_data/test_images/
+BACKUP_data/train_images/
+data/images/
+data/output/weights/
 Ex_data/train_images/
 Ex_data/test_images/
 Ex1_BLIP/Salesforce/blip-image-captioning-base/pytorch_model.bin

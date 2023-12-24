@@ -6,7 +6,7 @@ from PIL import Image
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
-from configurations import Config  # 导入配置类
+from configuartions import Config  # 导入配置类
 
 
 # 从配置文件获取配置
@@ -105,7 +105,7 @@ def create_dataset(max_len=64):
 
 
 # 调用函数，整理数据集
-# create_dataset()
+create_dataset()
 
 
 class ImageTextDataset(Dataset):

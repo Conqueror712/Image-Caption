@@ -1,9 +1,14 @@
+"""
+我们使用强化学习损失函数，将交叉熵损失和CIDEr-D评价指标结合，优化损失函数。
+我们将使用REINFORCE算法来进行更新。
+"""
 import json
 import torch
 import os
 from configuartions import Config
 from models import AttentionModel, get_optimizer, PackedCrossEntropyLoss, evaluate_cider
 from datasets import create_dataloaders, ImageTextDataset
+from torch.distributions import Categorical
 
 
 def main():
@@ -41,6 +46,23 @@ def main():
 
     best_val_score = float('-inf')  # 初始化最佳验证得分
 
+    for epoch in range(config.num_epochsum_epochs):
+        model.train()
+        for i, (imgs, caps, caplens) in enumerate(train_dataloader):
+            imgs, caps = imgs.to(device), caps.to(device)
+            caplens = caplens.cpu().to(torch.int64)
+            optimizer.zero_grad()
+            outputs, alphas, _, _, softmax_probabilities = model(imgs, caps, caplens)
+            current_test_score = evaluate_cider(test_loader, model, config)
+            m = Categorical(torch.tensor(softmax_probabilities))
+            action = m.sample()
+            log_probs = m.log_prob(action)
+            reinforce_loss = -log_probs * float(current_test_score)
+            reinforce_loss.mean().backward()
+            optimizer.step()
+
+
+    """
     # 开始训练
     for epoch in range(config.num_epochs):
         # 训练模型
@@ -75,6 +97,7 @@ def main():
             best_model_path = os.path.join(weights_dir, f'Attention_model_background_caption_{best_test_score}.pth')
             torch.save(model.state_dict(), best_model_path)
             print(f"Saved new best model to {best_model_path}")
+    """
 
     # 训练完成后的最终评估
     final_test_score = evaluate_cider(test_loader, model, config)
@@ -88,3 +111,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
