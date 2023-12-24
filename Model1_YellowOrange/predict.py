@@ -41,7 +41,7 @@ def predict_caption(model, image_tensor, vocab, config):
 def main():
     # 载入配置和词汇表
     config = Config()
-    with open('../data/output/vocab.json', 'r') as f:
+    with open('../data/output/vocab_caption_1.json', 'r') as f:
         vocab = json.load(f)
 
     # 加载模型
@@ -49,7 +49,7 @@ def main():
     model = load_model(model_path, vocab, config)
 
     # 处理图片并生成描述
-    image_path = '../data/images/MEN-Denim-id_00000080-01_7_additional.jpg'  # 测试图片路径
+    image_path = '../data/images_1/MEN-Denim-id_00000080-01_7_additional.jpg'  # 测试图片路径
     image_tensor = process_image(image_path)
     caption = predict_caption(model, image_tensor, vocab, config)
 
@@ -57,3 +57,35 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+"""
+model = ...             # 加载模型
+
+images_folder = "..."   # 图片文件夹路径
+captions_dict = {}      # 字典
+
+count = 1               # 计数
+
+for filename in os.listdir(images_folder):
+    if filename.endswith(".jpg") or filename.endswith(".png"):
+        img_path = os.path.join(images_folder, filename)
+        
+        # Load the image
+        raw_image = Image.open(img_path).convert('RGB')
+    
+        generated_caption = ... # 生成caption
+
+        print(f"No{count}", generated_caption)
+        count += 1
+
+        # Store the caption in the dictionary
+        captions_dict[img_path] = generated_caption
+
+# Save the dictionary to captions.json
+output_path = "..." # 保存路径
+with open(output_path, 'w') as json_file:
+    json.dump(captions_dict, json_file, indent=4)
+
+print(f"Captions saved to {output_path}")
+"""
