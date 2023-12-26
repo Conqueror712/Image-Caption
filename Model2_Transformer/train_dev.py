@@ -41,7 +41,7 @@ transform = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 
-train_dataset = MyDataset('../data/train_captions.json', '../data/train_images', transform=transform)
+train_dataset = MyDataset('../data_common/train_captions.json', '../data_common/train_images', transform=transform)
 train_dataloader = DataLoader(train_dataset, batch_size=16, shuffle=True)
 
 # 定义损失函数和优化器

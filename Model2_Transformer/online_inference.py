@@ -15,12 +15,8 @@ nltk.download('wordnet')
 
 parser = argparse.ArgumentParser(description='Image Captioning')
 parser.add_argument('--img', type=str, help='Image Path', required=True)
-# parser.add_argument('--v', type=str, help='version', default='v3')
-# parser.add_argument('--checkpoint', type=str, help='checkpoint path', default=None)
 args = parser.parse_args()
 image_path = args.path
-# version = args.v
-# checkpoint_path = args.checkpoint
 
 config = Config()
 
@@ -30,24 +26,6 @@ model = torch.hub.load('saahiluppal/catr', 'v3', pretrained=True)
 # 保存模型权重
 torch.save(model.state_dict(), "image_caption_model.pth")
 
-# if version == 'v1':
-#     model = torch.hub.load('saahiluppal/catr', 'v1', pretrained=True)
-# elif version == 'v2':
-#     model = torch.hub.load('saahiluppal/catr', 'v2', pretrained=True)
-# elif version == 'v3':
-#     model = torch.hub.load('saahiluppal/catr', 'v3', pretrained=True)
-# else:
-#     print("Checking for checkpoint.")
-#     if checkpoint_path is None:
-#       raise NotImplementedError('No model to chose from!')
-#     else:
-#       if not os.path.exists(checkpoint_path):
-#         raise NotImplementedError('Give valid checkpoint path')
-#       print("Found checkpoint! Loading!")
-#       model,_ = caption.build_model(config)
-#       print("Loading Checkpoint...")
-#       checkpoint = torch.load(checkpoint_path, map_location='cpu')
-#       model.load_state_dict(checkpoint['model'])
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
 # 预处理图片
@@ -86,7 +64,7 @@ def evaluate():
 
     return caption
 
-with open('../data/test_captions.json', 'r') as f:
+with open('../data_common/test_captions.json', 'r') as f:
     captions = json.load(f)
 
 filename = os.path.basename(image_path)

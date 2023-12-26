@@ -1,6 +1,8 @@
-data_common/test_images/
-data_common/train_images/
-data/images/
-data/output/weights/
+data_old/test_images/
+data_old/train_images/
+data_new/test_images/
+data_new/train_images_1/
+data_new/train_images_2/
+data_new/output/weights/
 Ex1_BLIP/Salesforce/blip-image-captioning-base/pytorch_model.bin
 Model2_Transformer/image_caption_model.pth
