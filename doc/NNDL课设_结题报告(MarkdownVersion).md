@@ -1020,6 +1020,10 @@ def calc_rouge_l(reference, hypothesis):
 
 ![image](../doc/img/Transformer_demo2.png)
 
+![image](../doc/img/Transformer_demo3.png)
+
+![image](../doc/img/Transformer_demo4.png)
+
 #### 5.1.3 BLIP 多模态输出展示
 
 ![image](../doc/img/BLIP_1.png)
@@ -1027,6 +1031,8 @@ def calc_rouge_l(reference, hypothesis):
 ![image](../doc/img/BLIP_2.png)
 
 ![image](../doc/img/BLIP_3.png)
+
+![image](../doc/img/BLIP_full.png)
 
 ### 5.2 评测指标统计
 
