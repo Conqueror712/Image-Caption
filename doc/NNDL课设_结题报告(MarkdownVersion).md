@@ -938,7 +938,7 @@ def calc_rouge_l(reference, hypothesis):
 
 - 利用训练的服饰图像描述模型，为真实背景的服饰图像数据集增加服饰描述，构建全新的服饰图像描述数据集，**在新数据集上重新训练服饰图像描述模型**：
     - 使用普通的损失函数进行训练的结果：
-    ![Alt text](../doc/img/image.png)
+    ![Alt text](../doc/img/image20.png)
 
     - 使用**基于强化学习的损失函数**进行训练的结果：
 
