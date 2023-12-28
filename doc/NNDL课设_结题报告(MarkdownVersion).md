@@ -566,7 +566,6 @@ def rename_images(folder_path):
         def forward(self, image_code, captions, cap_lens):
         """
         完整的前馈过程。
-    
         参数：
             hidden_state: (num_layers, batch_size, hidden_size)
             image_code:  (batch_size, feature_channel, feature_size)
@@ -599,7 +598,6 @@ def rename_images(folder_path):
                 actual_length = cap_lens[i]
                 # 只拷贝实际长度的预测结果
                 padded_predictions[i, :actual_length, :] = predictions[i, :actual_length, :]
-    
         return padded_predictions, alphas, captions, lengths, sorted_cap_indices
     ```
 
@@ -608,10 +606,10 @@ def rename_images(folder_path):
     class AttentionModel(nn.Module):
     def __init__(self, image_code_dim, vocab, word_dim, attention_dim, hidden_size, num_layers):
         pass
-    
+
     def forward(self, images, captions, cap_lens):
         pass
-    
+
     def generate_by_beamsearch(self, images, beam_k, max_len):
         vocab_size = len(self.vocab)
         image_codes = self.encoder(images)
@@ -1347,7 +1345,7 @@ def build_transformer(config):
 
 ![image](../doc/img/Transformer_demo4.png)
 
-### 5.3 多模态模型BLIP的输出展示以及分析：
+### 5.3 BLIP 多模态输出展示
 
 ![image](../doc/img/BLIP_1.png)
 
@@ -1466,3 +1464,38 @@ torch.save(model.state_dict(), 'Model2.pth')
 
 ## 七、总结
 
+### 7.1 对比分析
+
+> 待补充，可能包括不同模型的对比，误差分析，局限性分析和可能的改进方向。
+
+### 7.2 实验心得
+
+在进行实验的过程中，我们深刻体会到了许多关于计算机视觉和自然语言处理交叉领域的知识应用，关于经验和心得，可说的包括但不限于以下内容：
+
+首先是模型选择，在选择模型结构时，我们意识到了模型的复杂性与性能之间的平衡。过于简单的模型可能无法捕捉到复杂的图像语境，而过于复杂的模型可能导致过拟合，而且可能会对硬件设备的要求比较高，综合考虑之下，我们选择了比较合适的几个模型。
+
+其次是数据预处理部分，实验中，我们一开始没有对数据进行预处理，结果得到的效果不尽如人意，后来我们着手进行了数据的预处理，使得模型能够更好地理解输入数据，并提高了训练的效果。
+
+紧接着是超参数的调优，通过多次实验，我们认识到超参数的选择和模型微调对实验结果的影响是巨大的。系统地调整学习率、Batch Size 和 Epoch 次数等超参数，结合模型微调，对于提高模型性能起到了关键作用。尤其是 Batch Size，这直接影响到了我们是否能够开始训练，在实验中，我们遇到了一个棘手的问题是内存不足：
+
+![image](../doc/img/Out_of_Memory.png)
+
+经过不断的查找解决方法，最终我们发现调整 Batch Size 和使用梯度积累的方法可以改善这种情况。
+
+然后是评估指标的综合考虑，在评估模型性能时，我采用了多个评估指标，包括 METEOR、ROUGE-L 等。这帮助我更全面地了解了模型生成描述的质量。综合考虑不同指标的结果，有助于更全面地评估模型的性能。部分计算评估指标的代码如下：
+
+```Python
+# 计算METEOR分数
+def calc_meteor(reference, hypothesis):
+    hypothesis = word_tokenize(hypothesis)
+    reference = word_tokenize(reference)
+    return single_meteor_score(reference, hypothesis)
+
+# 计算ROUGE-L分数
+def calc_rouge_l(reference, hypothesis):
+    rouge = Rouge()
+    scores = rouge.get_scores(hypothesis, reference)
+    return scores[0]['rouge-l']['f']
+```
+
+最后，通过这个实验，我们深感计算机视觉和自然语言处理的快速发展，也认识到了自己的知识不足之处。我们经过这次实验，对深度学习、图像处理和文本生成等领域有了更深入的理解，也激发了我们对未来深入学习和探索的兴趣。如果要用一句话来概括这整个神经网络与深度学习课程设计，我们会说这次实验是我们从理论到实践的一次重要尝试，通过不断调整和优化，我们逐渐提高了对这一复杂任务的理解，同时也加深了对深度学习技术的认识。这次实验不仅是对知识的巩固，也是对实际问题解决能力的锻炼，为我们未来的研究和工作奠定了坚实的基础，受益匪浅。
