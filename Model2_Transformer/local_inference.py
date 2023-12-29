@@ -14,7 +14,7 @@ nltk.download('punkt')
 nltk.download('wordnet')
 
 parser = argparse.ArgumentParser(description='Image Captioning')
-parser.add_argument('--img', type=str, help='Image Path', required=True)
+parser.add_argument('--path', type=str, help='Image Path', required=True)
 args = parser.parse_args()
 image_path = args.path
 
@@ -60,7 +60,7 @@ def evaluate():
         cap_mask[:, i+1] = False
     return caption
 
-with open('../data_common/test_captions.json', 'r') as f:
+with open('../data_old/test_captions.json', 'r') as f:
     captions = json.load(f)
 
 filename = os.path.basename(image_path)

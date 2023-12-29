@@ -29,7 +29,7 @@ model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-capt
 # img_url = 'https://storage.googleapis.com/sfr-vision-language-research/BLIP/demo.jpg' # 图片URL版本
 # raw_image = Image.open(requests.get(img_url, stream=True).raw).convert('RGB') # 图片URL版本
 
-img_local_url = "images/demo_2.jpg" # 本地图片版本
+img_local_url = "../data_new/test_images/test_8.jpg" # 本地图片版本
 raw_image = Image.open(img_local_url).convert('RGB') # 本地图片版本
 
 # Conditional image captioning
@@ -43,13 +43,13 @@ print("背景描述：", generated_caption)
 # print_line()
 
 # Unconditional image captioning
-inputs = processor(raw_image, return_tensors="pt").to("cuda", torch.float16)
+# inputs = processor(raw_image, return_tensors="pt").to("cuda", torch.float16)
 
-out = model.generate(**inputs)
-generated_caption_unconditional = processor.decode(out[0], skip_special_tokens=True)
-print_line()
-print("图像描述：", generated_caption_unconditional)
-print_line()
+# out = model.generate(**inputs)
+# generated_caption_unconditional = processor.decode(out[0], skip_special_tokens=True)
+# print_line()
+# print("图像描述：", generated_caption_unconditional)
+# print_line()
 
 # # 加入评估指标计算
 # with open('../data/test_captions.json', 'r') as f:
